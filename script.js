@@ -66,3 +66,6 @@ form.addEventListener('submit', async (e) => {
   btn.innerHTML = original;
   btn.disabled = false;
 });
+
+// Fondo animado del banner
+AXBackground(document.getElementById('heroCanvas'), { colors: ['#4a8eff', '#8b5cf6'] });
