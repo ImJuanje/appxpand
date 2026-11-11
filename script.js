@@ -1,9 +1,6 @@
-// Acceso al dashboard de comerciales: pon aquí la URL de tu dashboard (https://…netlify.app).
-// Mientras esté vacía, los enlaces «Acceso comerciales» no se muestran.
-const DASHBOARD_URL = '';
-document.querySelectorAll('[data-dashboard]').forEach(a => {
-  if (DASHBOARD_URL) { a.href = DASHBOARD_URL; a.rel = 'noopener nofollow'; } else { a.hidden = true; }
-});
+// ACCESO COMERCIALES · cambia SOLO esta línea por la URL de tu dashboard
+const DASHBOARD_URL = 'https://appxpanddash.netlify.app';
+document.querySelectorAll('[data-dashboard]').forEach(a => { a.href = DASHBOARD_URL; a.rel = 'noopener'; });
 
 // Mobile menu toggle
 const navToggle = document.getElementById('navToggle');
