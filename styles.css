@@ -536,3 +536,12 @@ body { overflow-x: hidden; }
   .pricing-grid, .pricing-grid.pricing-single { grid-template-columns: minmax(0, 520px); justify-content: center; }
 }
 .nav-links a.btn-primary, .nav-links a.btn-primary:hover { color: #fff; }
+
+/* Fondo animado del banner */
+.hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 1; pointer-events: none; }
+.hero-glow-1 { animation: pulseGlow 3s ease-in-out infinite, driftA 18s ease-in-out infinite alternate; }
+.hero-glow-2 { animation: pulseGlow 3s ease-in-out 1.5s infinite, driftB 22s ease-in-out infinite alternate; }
+@keyframes driftA { to { transform: translate(18vw, 8vh); } }
+@keyframes driftB { to { transform: translate(-16vw, -10vh); } }
+.hero-content { z-index: 10; }
+@media (prefers-reduced-motion: reduce) { .hero-glow-1, .hero-glow-2 { animation: none; } }
