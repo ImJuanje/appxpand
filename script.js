@@ -1,9 +1,17 @@
+// Acceso al dashboard de comerciales: pon aquí la URL de tu dashboard (https://…netlify.app).
+// Mientras esté vacía, los enlaces «Acceso comerciales» no se muestran.
+const DASHBOARD_URL = '';
+document.querySelectorAll('[data-dashboard]').forEach(a => {
+  if (DASHBOARD_URL) { a.href = DASHBOARD_URL; a.rel = 'noopener nofollow'; } else { a.hidden = true; }
+});
+
 // Mobile menu toggle
 const navToggle = document.getElementById('navToggle');
 const mobileMenu = document.getElementById('mobileMenu');
 
 navToggle.addEventListener('click', () => {
   mobileMenu.classList.toggle('active');
+  navToggle.setAttribute('aria-expanded', mobileMenu.classList.contains('active'));
   const icon = navToggle.querySelector('svg');
   if (mobileMenu.classList.contains('active')) {
     icon.innerHTML = '<line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>';
