@@ -34,8 +34,8 @@ a.axc-card{display:block;box-sizing:border-box}
 .axc-time{background:var(--bg,#0a0c14);border:1px solid var(--border,#2a3045);color:var(--fg,#e8ecf4);border-radius:8px;padding:7px 12px;font-size:.85rem;cursor:pointer;font-family:inherit}
 .axc-time:hover{border-color:var(--primary,#4a8eff)}
 .axc-fm{display:flex;flex-direction:column;gap:7px;max-width:100%;width:100%;box-sizing:border-box}
-.axc-fm input{background:var(--bg,#0a0c14);border:1px solid var(--border,#2a3045);border-radius:8px;color:var(--fg,#e8ecf4);padding:8px 10px;font-size:.88rem;font-family:inherit;outline:none}
-.axc-fm input:focus{border-color:var(--primary,#4a8eff)}
+.axc-fm input,.axc-fm textarea{background:var(--bg,#0a0c14);border:1px solid var(--border,#2a3045);border-radius:8px;color:var(--fg,#e8ecf4);padding:8px 10px;font-size:.88rem;font-family:inherit;outline:none}
+.axc-fm input:focus,.axc-fm textarea:focus{border-color:var(--primary,#4a8eff)}
 .axc-fm small{font-size:.7rem;color:var(--fg-muted,#7a829a)}
 .axc-fm button{border:0}
 
@@ -50,3 +50,5 @@ a.axc-card{display:block;box-sizing:border-box}
 .tm-card .btn{margin-top:auto}
 .tm-msg{grid-column:1/-1;text-align:center;color:var(--fg-secondary)}
 .tm-msg a{color:var(--primary)}
+
+.axc-fm textarea{resize:vertical;min-height:62px}

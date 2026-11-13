@@ -152,16 +152,55 @@
   function repCards(tm){
     cards([],tm.map(function(x){return{t:'Con '+x.name+(x.zone?' · '+x.zone:''),fn:function(){chooseRep(x);}};}),true);
   }
+  /* Solicitud de cita: el cliente deja sus datos y se crea su ficha en el dashboard de la persona elegida */
+  function whenText(w){
+    if(!w||(!w.date&&!w.time))return '';
+    return 'Me viene bien: '+(w.date?labL(w.date):'')+(w.time?' a las '+w.time:'')+'.';
+  }
+  function repRequest(x,pref){
+    REP=x;SL=null;inBook=true;
+    var who=x&&x.name?x.name:'nuestro equipo';
+    reply(function(){
+      bubble('bot','Perfecto. Déjanos tus datos y '+who+' se pondrá en contacto contigo lo antes posible para acordar la cita.');
+      leadForm(x,pref||'');
+    });
+  }
+  function leadForm(x,pref){
+    var f=document.createElement('form');f.className='axc-m bot axc-fm';
+    f.innerHTML='<input name="name" required maxlength="60" placeholder="Tu nombre" autocomplete="name">'+
+      '<input name="email" type="email" required maxlength="100" placeholder="Tu email" autocomplete="email">'+
+      '<input name="phone" type="tel" maxlength="25" placeholder="Teléfono (opcional)" autocomplete="tel">'+
+      '<input name="business" maxlength="120" placeholder="Tu negocio (opcional)" autocomplete="organization">'+
+      '<textarea name="message" maxlength="600" rows="3" placeholder="Cuéntanos qué necesitas y a qué hora te viene bien (opcional)"></textarea>'+
+      '<input name="hp" tabindex="-1" autocomplete="off" style="position:absolute;left:-9999px" aria-hidden="true">'+
+      '<small>Al enviar aceptas la <a href="privacidad.html" target="_blank">política de privacidad</a>.</small>'+
+      '<button type="submit" class="axc-card cta">Solicitar cita</button>';
+    f.message.value=pref;
+    box.appendChild(f);scroll();f.name.focus();
+    f.addEventListener('submit',function(e){
+      e.preventDefault();if(busy)return;
+      var v={action:'lead',rep:x?x.id:'admin',name:f.name.value,email:f.email.value,phone:f.phone.value,business:f.business.value,message:f.message.value,hp:f.hp.value};
+      f.querySelectorAll('input,textarea,button').forEach(function(el){el.disabled=true;});
+      busy=true;var t=typing();
+      fetch(AGENDA,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(v)})
+        .then(function(r){return r.json().then(function(j){return{s:r.status,j:j};});})
+        .then(function(r){
+          t.remove();busy=false;
+          if(r.s===200){
+            var wn=x&&x.name;inBook=false;REP=null;
+            bubble('bot','✅ ¡Solicitud enviada!'+(wn?' '+wn+' ha recibido tus datos y':' Hemos recibido tus datos y')+' te contactará lo antes posible para acordar la cita.\n¡Gracias, '+v.name.trim().split(' ')[0]+'!');
+            cards([],[],true);
+          }else if(r.s===400){
+            bubble('bot','Revisa tu nombre y tu email e inténtalo de nuevo.');f.remove();leadForm(x,v.message);
+          }else fail();
+        }).catch(function(){t.remove();busy=false;fail();});
+    });
+  }
   function chooseRep(x,quiet){
     if(busy)return;
-    REP=x;SL=null;
     if(!quiet)bubble('user','Con '+x.name);
-    busy=true;var t=typing();
-    load().then(function(j){
-      t.remove();busy=false;
-      if(pendingWhen){var w=pendingWhen;pendingWhen=null;handleWhen(w);return;}
-      days(j,'Elige el día para hablar con '+x.name+'. También puedes escribirlo, por ejemplo: "viernes a las 17:30".');
-    }).catch(function(){t.remove();busy=false;fail();});
+    var pref=pendingWhen?whenText(pendingWhen):'';pendingWhen=null;
+    repRequest(x,pref);
   }
   function askRep(msg){
     REP=null;SL=null;
@@ -176,10 +215,7 @@
       var pr=typeof preset==='string'&&tm.filter(function(x){return x.id===preset;})[0];
       if(pr)return chooseRep(pr,true);
       if(tm.length>=2)return askRep();
-      REP=tm[0]||{id:'admin',name:''};SL=null;
-      busy=true;var t2=typing();
-      load().then(function(j){t2.remove();busy=false;days(j,'Elige el día que te venga bien. También puedes escribirlo, por ejemplo: "viernes a las 17:30".');})
-        .catch(function(){t2.remove();busy=false;fail();});
+      repRequest(tm[0]||{id:'admin',name:''});
     });
   }
   function days(j,msg){
@@ -275,6 +311,9 @@
         if(tm.length>=2){t.remove();busy=false;pendingWhen=w;askRep('Antes de nada, ¿con quién quieres hablar?');return;}
         REP=tm[0]||{id:'admin',name:''};SL=null;
       }
+      t.remove();busy=false;
+      return repRequest(REP,whenText(w));
+      /* (calendario desactivado: ahora el cliente deja sus datos y el comercial le contacta) */
       return load().then(function(j){
         t.remove();busy=false;
         if(!w.date){days(j,'¿Qué día te viene bien?');return;}
