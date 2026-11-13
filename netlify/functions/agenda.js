@@ -134,9 +134,28 @@ exports.handler = async (event) => {
       return res(200, (await getSlots(p)).out);
     }
     if (event.httpMethod !== 'POST') return res(405, { error: 'metodo' });
-    if (limited('p' + ip, 5, 60 * 60e3)) return res(429, { error: 'limite' });
 
     const b = JSON.parse(event.body || '{}');
+
+    // Solicitud de cita: el cliente deja sus datos y se crea su ficha en el dashboard del comercial elegido.
+    // No usa Google: solo necesita DASHBOARD_URL y AGENDA_KEY.
+    if (b.action === 'lead') {
+      if (limited('l' + ip, 5, 60 * 60e3)) return res(429, { error: 'limite' });
+      if (b.hp) return res(200, { ok: true }); // honeypot anti-bots
+      const name = clean(b.name, 60), email = clean(b.email, 100), phone = clean(b.phone, 25);
+      if (name.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return res(400, { error: 'datos' });
+      if (!DASH || KEY.length < 16) { console.error('lead: faltan DASHBOARD_URL / AGENDA_KEY'); return res(503, { error: 'config' }); }
+      const p = await person(b.rep);
+      if (!p) return res(404, { error: 'responsable' });
+      const r = await fetch(DASH + '/api/public/lead', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'x-agenda-key': KEY },
+        body: JSON.stringify({ mode: 'request', rep: p.id, name, email, phone, business: clean(b.business, 120), message: clean(b.message, 600) }),
+      });
+      if (!r.ok) { console.error('lead HTTP', r.status, (await r.text()).slice(0, 200)); return res(502, { error: 'dashboard' }); }
+      return res(200, { ok: true, rep: { id: p.id, name: p.name } });
+    }
+
+    if (limited('p' + ip, 5, 60 * 60e3)) return res(429, { error: 'limite' });
     if (b.hp) return res(200, { ok: true }); // honeypot anti-bots
     const name = clean(b.name, 60), email = clean(b.email, 100), phone = clean(b.phone, 25);
     if (name.length < 2 || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return res(400, { error: 'datos' });
