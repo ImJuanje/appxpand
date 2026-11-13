@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Equipo | AppXpand</title>
+  <meta name="description" content="Conoce al equipo de AppXpand y agenda una llamada con quien prefieras: webs y perfil de Google para negocios locales en Albacete, Ciudad Real y Alicante." />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="chat-widget.css" />
+</head>
+<body>
+<nav class="navbar"><div class="container"><a href="index.html" class="navbar-brand">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      <span><span class="text-gradient">App</span>Xpand</span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html#servicios">Qué hacemos</a>
+      <a href="index.html#precios">Precios</a>
+      <a href="equipo.html" aria-current="page">Equipo</a>
+      <a href="index.html#contacto">Contacto</a>
+      <a href="#" class="btn btn-primary btn-sm" data-book>Agendar llamada</a>
+    </div></div></nav>
+<main class="section" style="padding-top:120px;">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-badge">Equipo</span>
+      <h1 style="font-size:clamp(1.9rem,4vw,2.6rem);">Personas que te <span class="text-gradient">atienden de verdad</span></h1>
+      <p>Elige con quién quieres hablar y reserva tu llamada en menos de un minuto. Cada uno lleva su zona.</p>
+    </div>
+    <div class="tm-grid" id="teamGrid" aria-live="polite"><p class="tm-msg">Cargando equipo…</p></div>
+  </div>
+</main>
+<footer class="footer">
+  <div class="container">
+    <a href="index.html" class="navbar-brand" style="font-size:1rem;">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      <span><span class="text-gradient">App</span>Xpand</span>
+    </a>
+    <div class="footer-links">
+      <a href="index.html#servicios">Qué hacemos</a>
+      <a href="index.html#proceso">Cómo trabajamos</a>
+      <a href="index.html#precios">Precios</a>
+      <a href="index.html#contacto">Contacto</a>
+      <a href="#" data-dashboard>Acceso comerciales</a>
+    </div>
+    <div class="footer-legal"><a href="aviso-legal.html">Aviso legal</a><a href="privacidad.html">Privacidad</a><a href="cookies.html">Cookies</a><span>© 2026 AppXpand</span></div>
+  </div>
+</footer>
+<script src="chat-widget.js" defer></script>
+<script>
+(function () {
+  var grid = document.getElementById('teamGrid');
+  function book(id) { if (window.axcBook) window.axcBook(id); else setTimeout(function () { book(id); }, 300); }
+  function card(p) {
+    var c = document.createElement('article'); c.className = 'tm-card';
+    var av;
+    if (p.photo && /^data:image\/jpeg;base64,/.test(p.photo)) { av = document.createElement('img'); av.src = p.photo; av.alt = 'Foto de ' + p.name; av.className = 'tm-av'; }
+    else { av = document.createElement('span'); av.className = 'tm-av tm-av--i'; av.textContent = (p.name || '?').trim().charAt(0).toUpperCase(); }
+    var h = document.createElement('h3'); h.textContent = p.name;
+    c.appendChild(av); c.appendChild(h);
+    if (p.zone) { var z = document.createElement('p'); z.className = 'tm-zone'; z.textContent = '📍 ' + p.zone; c.appendChild(z); }
+    if (p.bio) { var b = document.createElement('p'); b.className = 'tm-bio'; b.textContent = p.bio; c.appendChild(b); }
+    var btn = document.createElement('button'); btn.type = 'button'; btn.className = 'btn btn-primary'; btn.textContent = 'Agendar con ' + p.name;
+    btn.onclick = function () { book(p.id); };
+    c.appendChild(btn);
+    return c;
+  }
+  fetch('/.netlify/functions/agenda?team=1').then(function (r) { return r.json(); }).then(function (j) {
+    var t = j.team || [];
+    grid.textContent = '';
+    if (!t.length) throw 0;
+    t.forEach(function (p) { grid.appendChild(card(p)); });
+  }).catch(function () {
+    grid.innerHTML = '<p class="tm-msg">Pronto te presentamos al equipo. Mientras tanto puedes <a href="#" data-book>agendar una llamada</a> o <a href="index.html#contacto">pedir tu revisión gratuita</a>.</p>';
+  });
+  document.addEventListener('click', function (e) {
+    var a = e.target.closest('[data-book]'); if (!a) return;
+    e.preventDefault(); book();
+  });
+})();
+</script>
+</body>
+</html>
