@@ -66,3 +66,21 @@ form.addEventListener('submit', async (e) => {
 
 // Fondo animado del banner
 AXBackground(document.getElementById('heroCanvas'), { colors: ['#4a8eff', '#8b5cf6'] });
+
+
+/* Demos: escala de la vista previa y filtros */
+(function () {
+  const screens = document.querySelectorAll('.demo-screen');
+  function fit() { screens.forEach(s => s.style.setProperty('--s', s.clientWidth / 1280)); }
+  fit(); window.addEventListener('resize', fit);
+
+  const cards = document.querySelectorAll('.demo-card');
+  const btns = document.querySelectorAll('.demo-filter');
+  function filter(f) {
+    btns.forEach(b => b.classList.toggle('active', b.dataset.filter === f));
+    cards.forEach(c => c.classList.toggle('hide', f !== 'all' && c.dataset.pack !== f));
+    setTimeout(fit, 0);
+  }
+  btns.forEach(b => b.addEventListener('click', () => filter(b.dataset.filter)));
+  document.querySelectorAll('.plan-demo-link').forEach(a => a.addEventListener('click', () => filter(a.dataset.filter)));
+})();
