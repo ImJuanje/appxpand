@@ -545,3 +545,11 @@ body { overflow-x: hidden; }
 @keyframes driftB { to { transform: translate(-16vw, -10vh); } }
 .hero-content { z-index: 10; }
 @media (prefers-reduced-motion: reduce) { .hero-glow-1, .hero-glow-2 { animation: none; } }
+
+/* Demos dentro de las tarjetas de plan */
+.plan-demos { margin: 4px 0 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+.plan-demos-label { display: block; font-size: 0.75rem; text-transform: uppercase; letter-spacing: .06em; color: var(--fg-muted); margin-bottom: 10px; }
+.plan-demos-links { display: flex; flex-wrap: wrap; gap: 8px; }
+.demo-link { display: inline-flex; align-items: center; gap: 6px; padding: 7px 12px; font-size: 0.8125rem; color: var(--fg-secondary); background: var(--bg-card); border: 1px solid var(--border); border-radius: 999px; text-decoration: none; transition: border-color .2s, color .2s; }
+.demo-link:hover { color: var(--fg); border-color: var(--primary); }
+.demo-link svg { color: var(--primary); }
