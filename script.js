@@ -84,3 +84,15 @@ AXBackground(document.getElementById('heroCanvas'), { colors: ['#4a8eff', '#8b5c
   btns.forEach(b => b.addEventListener('click', () => filter(b.dataset.filter)));
   document.querySelectorAll('.plan-demo-link').forEach(a => a.addEventListener('click', () => filter(a.dataset.filter)));
 })();
+
+// Desplegable "Ejemplos" del header
+(() => {
+  const dd = document.querySelector('.nav-dd');
+  if (!dd) return;
+  const btn = dd.querySelector('.nav-dd-btn');
+  const set = o => { dd.classList.toggle('open', o); btn.setAttribute('aria-expanded', o); };
+  btn.addEventListener('click', e => { e.stopPropagation(); set(!dd.classList.contains('open')); });
+  document.addEventListener('click', () => set(false));
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') set(false); });
+  dd.querySelectorAll('.nav-dd-menu a').forEach(a => a.addEventListener('click', () => set(false)));
+})();

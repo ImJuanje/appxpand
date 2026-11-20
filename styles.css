@@ -568,3 +568,26 @@ body { overflow-x: hidden; }
 .demo-info .btn svg { margin-left: 2px; }
 .plan-demo-link { display: block; text-align: center; margin: 0 0 14px; font-size: 0.8125rem; color: var(--primary); text-decoration: none; }
 .plan-demo-link:hover { text-decoration: underline; }
+
+/* ===== Header ordenado (escritorio) ===== */
+.nav-links { gap: 28px; white-space: nowrap; }
+.nav-main { display: flex; align-items: center; gap: 24px; }
+.nav-actions { display: flex; align-items: center; gap: 12px; padding-left: 20px; border-left: 1px solid var(--border); }
+.nav-dd { position: relative; }
+.nav-dd-btn { display: inline-flex; align-items: center; gap: 4px; background: none; border: 0; padding: 0; font: inherit; font-size: 0.875rem; color: var(--fg-muted); cursor: pointer; transition: color .2s; }
+.nav-dd-btn svg { transition: transform .2s; }
+.nav-dd:hover .nav-dd-btn, .nav-dd.open .nav-dd-btn, .nav-dd-btn:focus-visible { color: var(--fg); }
+.nav-dd:hover .nav-dd-btn svg, .nav-dd.open .nav-dd-btn svg { transform: rotate(180deg); }
+.nav-dd-menu { display: none; position: absolute; top: 100%; left: -14px; padding-top: 14px; min-width: 190px; }
+.nav-dd:hover .nav-dd-menu, .nav-dd.open .nav-dd-menu, .nav-dd:focus-within .nav-dd-menu { display: block; }
+.nav-dd-menu a { display: block; padding: 10px 16px; background: var(--bg-card); border: 1px solid var(--border); border-bottom: 0; font-size: 0.875rem; }
+.nav-dd-menu a:first-child { border-radius: 10px 10px 0 0; }
+.nav-dd-menu a:last-child { border-bottom: 1px solid var(--border); border-radius: 0 0 10px 10px; }
+.nav-dd-menu a:only-child { border-radius: 10px; }
+.nav-dd-menu a:hover { background: #181c2a; }
+@media (max-width: 1240px) {
+  .nav-main { gap: 20px; }
+  .nav-links { gap: 20px; }
+  .nav-access-t { display: none; }
+  .nav-access { padding: 8px; }
+}
