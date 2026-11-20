@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Obras · Demo | AppXpand</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..125,400..800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f1f2ee;--panel:#fff;--ink:#1c2328;--mut:#65707a;--line:#e1e3dc;--line2:#cdd0c7;--acc:#1f5f4a;--acc2:#e3efe9;--hz:#e0a526;--amb:#85580a;--amb2:#fbf0d9;--bad:#b3261e;--bad2:#fbe7e5}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 15px/1.5 Archivo,system-ui,sans-serif}
+h1,h2,h3{font-family:Archivo,sans-serif;margin:0;letter-spacing:-.01em}
+button{font:inherit;cursor:pointer}
+:focus-visible{outline:3px solid var(--hz);outline-offset:2px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+header{background:var(--ink);color:#fff;border-bottom:6px solid var(--hz)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:9px;font-weight:800;font-size:20px}
+.logo i{position:relative;width:24px;height:24px;border-radius:7px;background:var(--acc)}
+.logo i::after{content:"";position:absolute;inset:6px;border:2px solid #fff;border-radius:2px}
+.badge{background:var(--hz);color:var(--ink);font-weight:700;font-size:13px;padding:3px 10px;border-radius:4px}
+.hero{padding:22px 0 32px;max-width:740px}
+.hero h1{font-size:clamp(28px,5vw,46px);font-weight:800;line-height:1.08}
+.hero p{color:#b9c4c0;margin:12px 0 0}
+.tabs{display:flex;gap:6px;margin:22px 0 14px;flex-wrap:wrap}
+.tabs button{border:1.5px solid var(--ink);background:transparent;padding:8px 16px;border-radius:6px;font-weight:600}
+.tabs button[aria-pressed=true]{background:var(--ink);color:#fff}
+.hint{color:var(--mut);margin:0 0 16px}
+.layout{display:grid;grid-template-columns:270px 1fr;gap:16px;align-items:start}
+.list{display:grid;gap:8px}
+.ob{display:block;width:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--acc);border-radius:8px;padding:10px 12px}
+.ob[aria-current=true]{border-color:var(--ink);border-left-color:var(--hz);box-shadow:0 0 0 2px var(--ink)}
+.ob b{display:block}.ob small{display:block;color:var(--mut)}
+.pill{display:inline-block;margin-top:4px;font-size:12px;font-weight:700;padding:2px 9px;border-radius:20px;background:var(--acc2);color:var(--acc)}
+.pill.w{background:var(--amb2);color:var(--amb)}.pill.b{background:var(--bad2);color:var(--bad)}
+.box{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+.box h3{font-size:17px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.row{display:flex;justify-content:space-between;gap:10px;padding:6px 0;border-bottom:1px dashed var(--line)}
+.row:last-child{border-bottom:0}
+.btn{background:var(--acc);color:#fff;border:0;padding:10px 16px;border-radius:8px;font-weight:600;margin-top:10px}
+.btn.alt{background:transparent;color:var(--ink);border:1.5px solid var(--ink)}
+.btn.bad{background:var(--bad)}
+.btn.sm{padding:5px 12px;margin:0;font-size:13px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.chip{background:#fff;border:1.5px solid var(--ink);border-radius:20px;padding:4px 12px;font-size:14px}
+.chip:disabled{opacity:.4;cursor:not-allowed}
+.stop{background:var(--bad2);color:var(--bad);border-radius:8px;padding:8px 10px;font-weight:700;margin:8px 0;font-size:14px}
+.go{background:var(--acc2);color:var(--acc);border-radius:8px;padding:8px 10px;font-weight:700;margin:8px 0;font-size:14px}
+.bar{height:8px;background:var(--line);border-radius:4px;overflow:hidden;margin:4px 0 6px}
+.bar i{display:block;height:100%;background:var(--acc)}
+.empty,.mut{color:var(--mut)}
+.empty{padding:26px;border:1.5px dashed var(--line2);border-radius:10px}
+.jobs{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:14px}
+.phonewrap{display:flex;justify-content:center;padding:10px 0 30px}
+.phone{width:340px;background:var(--bg);border:10px solid var(--ink);border-radius:36px;padding:20px 16px;min-height:600px;box-shadow:0 18px 0 -8px var(--hz)}
+.phone h2{font-size:22px;font-weight:800}
+.phone .box{padding:12px;margin:10px 0}
+.steps{display:flex;gap:3px;margin:12px 0 4px}
+.steps i{flex:1;height:6px;border-radius:3px;background:var(--line2)}
+.steps i.on{background:var(--acc)}
+.tot{font-weight:800;font-size:22px}
+.cta{margin-top:30px;background:var(--ink);color:#fff;border-radius:12px;padding:24px;display:flex;justify-content:space-between;gap:16px;align-items:center;flex-wrap:wrap}
+.cta a{background:var(--hz);color:var(--ink);font-weight:700;padding:10px 18px;border-radius:8px;text-decoration:none}
+.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 18px;border-radius:8px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9}
+.toast.show{opacity:1}
+footer{color:var(--mut);padding:24px 0 40px;font-size:13px}
+@media(max-width:820px){.layout{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="top"><span class="logo"><i></i>Obras</span><a href="index.html#herramientas" style="color:#b9c4c0;font-size:14px">← Volver a AppXpand</a><span class="badge">Demo con datos de ejemplo</span></div>
+  <div class="hero">
+    <h1>Lo que el cliente aprueba queda registrado. Lo que no, no se ejecuta.</h1>
+    <p>Prueba el recorrido: el reformista presupuesta, el cliente aprueba desde su móvil, surge un cambio y el operario ve «No ejecutar» hasta que el cliente decide.</p>
+  </div>
+</div></header>
+
+<main class="wrap">
+  <div class="tabs" role="group" aria-label="Vista de la demo">
+    <button data-v="ref">Reformista</button>
+    <button data-v="op">Operario</button>
+    <button data-v="cli">Cliente (móvil)</button>
+  </div>
+  <p class="hint" id="hint"></p>
+  <div id="app"></div>
+
+  <div class="cta">
+    <div><h2 style="font-size:24px">¿Lo quieres en tu empresa de reformas?</h2><div style="color:#b9c4c0">Cuéntanos cómo presupuestas hoy y vemos si encaja.</div></div>
+    <a href="index.html#contacto">Pedir información</a>
+  </div>
+  <footer>Demo ilustrativa: no guarda nada. Al recargar la página todo vuelve al inicio. <button class="btn alt sm" style="margin-left:8px" id="reset">Reiniciar demo</button></footer>
+</main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const E=['Presupuesto','Aprobada','En ejecución','Pendiente de cierre','Terminada'];
+const PRE=[['Demolición y escombros',420],['Alicatado de paredes',860],['Plato de ducha y grifería',390],['Fontanería y desagües',540],['Pintura y remates',260]];
+const MODS=[{d:'Cambiar el plato de ducha por una mampara',c:180,dias:1},{d:'Añadir un toallero eléctrico',c:95,dias:0}];
+const FASES=['Demolición','Fontanería','Alicatado','Remates'];
+const seed=()=>[
+{id:1,cli:'Carmen López',dir:'C/ Mayor 12, 2.º B',tipo:'Reforma de baño',e:0,pst:'borrador',items:[],mods:[],fases:[],hitos:[]},
+{id:2,cli:'Familia Gil',dir:'Av. de la Estación 8',tipo:'Reforma de cocina',e:2,pst:'aprobado',items:[['Desmontaje de cocina',380],['Alicatado',720],['Muebles y encimera',3200],['Instalación eléctrica',560]],mods:[{d:'Añadir enchufes en la isla',c:140,dias:1,s:'pendiente'}],fases:[{n:'Desmontaje',p:100},{n:'Instalación eléctrica',p:50}],hitos:[{n:'Entrada 30 %',i:1458,cob:true},{n:'Al montar los muebles',i:1944,cob:false}]},
+{id:3,cli:'Rosa Ortega',dir:'C/ Olivo 4, 1.º A',tipo:'Pintura de piso',e:4,pst:'aprobado',items:[['Pintura de paredes y techos',950],['Plastecido y lijado',220]],mods:[],fases:[{n:'Pintura',p:100}],hitos:[{n:'Pago final',i:1170,cob:true}]}];
+let O=seed(),view='ref',sel=1;
+const $=s=>document.querySelector(s),get=id=>O.find(o=>o.id===id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const eur=n=>n.toLocaleString('es-ES',{maximumFractionDigits:2})+' €';
+const base=o=>o.items.reduce((a,i)=>a+i[1],0);
+function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('show');clearTimeout(toast.t);toast.t=setTimeout(()=>e.classList.remove('show'),2400)}
+const pstLabel={borrador:'Sin enviar',enviado:'Pendiente del cliente',aprobado:'Aprobado',rechazado:'Rechazado por el cliente'};
+const pill=o=>`<span class="pill">${E[o.e]}</span>`;
+function lines(o,prices){return o.items.length?o.items.map(i=>`<div class="row"><span>${i[0]}</span>${prices?`<b>${eur(i[1])}</b>`:''}</div>`).join(''):'<p class="mut">Aún sin partidas.</p>'}
+function totals(o){const b=base(o);return o.items.length?`<div class="row"><span>Base</span><b>${eur(b)}</b></div><div class="row"><span>IVA 21 %</span><b>${eur(b*.21)}</b></div><div class="row"><b>Total</b><b>${eur(b*1.21)}</b></div>`:''}
+function modBadge(m){return m.s==='pendiente'?'<span class="pill w">Pendiente del cliente</span>':m.s==='aprobado'?'<span class="pill">Aprobado</span>':m.s==='desbloqueado'?'<span class="pill w">Desbloqueado por el reformista</span>':'<span class="pill b">Rechazado</span>'}
+function fases(o,edit){return o.fases.length?o.fases.map((f,i)=>`<div><div class="row" style="border:0;padding-bottom:0"><span>${f.n}</span><b>${f.p} %</b></div><div class="bar"><i style="width:${f.p}%"></i></div>${edit&&f.p<100?`<button class="btn sm alt" data-fp="${o.id},${i}">+25 %</button>`:''}</div>`).join(''):'<p class="mut">Aún sin fases.</p>'}
+
+const hints={ref:'Vista del reformista: elige una obra, arma el presupuesto y envíalo. Luego pasa a «Cliente (móvil)».',op:'Vista del operario: solo ve sus obras, sin importes ni cobros. Mira qué pasa con los cambios sin aprobar.',cli:'Vista del cliente: así recibe el enlace, aprueba y sigue el avance. Sin instalar nada.'};
+
+function ref(){
+  const o=get(sel),b=base(o),can=o.pst==='aprobado';
+  const list=O.map(x=>`<button class="ob" data-sel="${x.id}" aria-current="${x.id===sel}"><b>${x.cli}</b><small>${x.tipo} · ${x.dir}</small>${pill(x)}</button>`).join('');
+  const pres=`<div class="box"><h3>Presupuesto <span class="pill ${o.pst==='aprobado'?'':o.pst==='rechazado'?'b':'w'}">${pstLabel[o.pst]}</span></h3>${lines(o,true)}${totals(o)}${(o.pst==='borrador'||o.pst==='rechazado')?`<div class="chips">${PRE.map((p,i)=>`<button class="chip" data-add="${i}">+ ${p[0]} (${p[1]} €)</button>`).join('')}</div><button class="btn" data-send="1" ${o.items.length?'':'disabled'}>Enviar al cliente</button>`:''}</div>`;
+  const mods=`<div class="box"><h3>Modificados</h3>${o.mods.length?o.mods.map((m,i)=>`<div class="row"><span>${m.d}<br>${modBadge(m)}${m.s==='pendiente'?`<div class="stop">No ejecutar hasta que el cliente apruebe</div>`:''}</span><span style="text-align:right"><b>${eur(m.c)}</b><br><small class="mut">+${m.dias} día${m.dias===1?'':'s'}</small>${m.s==='pendiente'?`<br><button class="btn sm alt" data-unl="${i}" style="margin-top:6px">Desbloquear</button>`:''}</span></div>`).join(''):'<p class="mut">Sin cambios sobre el presupuesto.</p>'}${can?`<div class="chips">${MODS.map((m,i)=>`<button class="chip" data-mod="${i}" ${o.mods.some(x=>x.d===m.d)?'disabled':''}>+ ${m.d} (${m.c} €)</button>`).join('')}</div>`:'<p class="mut">Disponible cuando el cliente apruebe el presupuesto.</p>'}</div>`;
+  const nx=o.e>=1&&o.e<4?E[o.e+1]:null;
+  const av=`<div class="box"><h3>Avance <span class="pill">${E[o.e]}</span></h3>${can?fases(o,o.e>=2)+(o.e>=2?`<div class="chips">${FASES.filter(n=>!o.fases.some(f=>f.n===n)).map(n=>`<button class="chip" data-fase="${n}">+ Fase: ${n}</button>`).join('')}</div>`:'<p class="mut">Pasa la obra a «En ejecución» para añadir fases.</p>'):'<p class="mut">Disponible cuando el cliente apruebe el presupuesto.</p>'}${nx?`<button class="btn" data-adv="1">Pasar a «${nx}»</button>`:''}</div>`;
+  const cob=`<div class="box"><h3>Cobros <small class="mut" style="font-weight:400">solo se anotan</small></h3>${o.hitos.length?o.hitos.map((h,i)=>`<div class="row"><span>${h.n}<br><span class="pill ${h.cob?'':'w'}">${h.cob?'Cobrado':'Pendiente de cobro'}</span></span><span style="text-align:right"><b>${eur(h.i)}</b><br><button class="btn sm alt" data-cob="${i}" style="margin-top:6px">${h.cob?'Marcar pendiente':'Marcar cobrado'}</button></span></div>`).join(''):'<p class="mut">Sin hitos de cobro.</p>'}${can?`<button class="btn alt" data-hito="1" ${o.hitos.length?'disabled':''}>Anotar hito: entrada 30 % (${eur(Math.round(b*1.21*.3))})</button>`:''}</div>`;
+  return `<div class="layout"><div class="list">${list}</div><div><h2 style="margin-bottom:10px">${o.cli} <small class="mut" style="font-weight:400">${o.dir}</small></h2>${pres}${mods}${av}${cob}</div></div>`;
+}
+function op(){
+  return `<div class="jobs">${O.filter(o=>o.id!==3).map(o=>`<div class="box"><h3>${o.tipo} · ${o.cli}<span class="pill">${E[o.e]}</span></h3><p class="mut" style="margin:0 0 6px">${o.dir}</p>${o.items.length?lines(o,false):'<p class="mut">Todavía sin partidas: el presupuesto no está aprobado.</p>'}${o.mods.map(m=>`<div class="row"><span>${m.d}</span></div>${m.s==='pendiente'||m.s==='rechazado'?'<div class="stop">No ejecutar</div>':'<div class="go">Se puede ejecutar</div>'}`).join('')}${o.pst==='aprobado'?`<div class="chips"><button class="chip" data-opmod="${o.id}">+ Registrar cambio con foto (sin coste)</button></div>`:''}</div>`).join('')}</div><p class="hint" style="margin-top:12px">El operario no ve importes ni cobros.</p>`;
+}
+function cli(){
+  const o=O.find(x=>x.pst==='enviado'||x.mods.some(m=>m.s==='pendiente'))||get(sel);
+  const bar=`<div class="steps" aria-hidden="true">${E.map((_,i)=>`<i class="${i<=o.e?'on':''}"></i>`).join('')}</div><small class="mut">${E[o.e]}</small>`;
+  let b='';
+  if(o.pst==='enviado')b+=`<div class="box"><b>Presupuesto pendiente de tu decisión</b>${lines(o,true)}${totals(o)}<button class="btn" style="width:100%" data-ok="1">Aprobar presupuesto</button><button class="btn alt" style="width:100%" data-no="1">Rechazar</button></div>`;
+  else if(o.pst==='aprobado')b+=`<div class="box"><b>Presupuesto aprobado</b>${lines(o,true)}${totals(o)}</div>`;
+  else b+=`<div class="box"><p class="mut" style="margin:0">Todavía no tienes nada que decidir.</p></div>`;
+  o.mods.forEach((m,i)=>{b+=`<div class="box"><b>Cambio: ${m.d}</b><div class="row"><span>Coste</span><b>${eur(m.c)}</b></div><div class="row"><span>Plazo</span><b>+${m.dias} día${m.dias===1?'':'s'}</b></div>${m.s==='pendiente'?`<button class="btn" style="width:100%" data-mok="${i}">Aprobar cambio</button><button class="btn alt" style="width:100%" data-mno="${i}">Rechazar</button>`:`<p style="margin:8px 0 0">${modBadge(m)}</p>`}</div>`});
+  if(o.fases.length)b+=`<div class="box"><b>Avance de la obra</b>${fases(o,false)}</div>`;
+  return `<div class="phonewrap"><div class="phone"><div style="font-weight:800">Tu obra</div><h2>${o.cli}</h2><small class="mut">${o.dir}</small>${bar}${b}</div></div>`;
+}
+function render(){
+  document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-pressed',b.dataset.v===view));
+  $('#hint').textContent=hints[view];
+  $('#app').innerHTML={ref,op,cli}[view]();
+}
+document.addEventListener('click',e=>{
+  const b=e.target.closest('button');if(!b)return;const d=b.dataset,o=get(sel);
+  if(d.v){view=d.v}
+  else if(d.sel){sel=+d.sel}
+  else if(d.add!==undefined){o.items.push(PRE[+d.add].slice())}
+  else if(d.send){o.pst='enviado';toast('Enlace generado y enviado al cliente')}
+  else if(d.ok){const c=O.find(x=>x.pst==='enviado');c.pst='aprobado';c.e=1;toast('Presupuesto aprobado: la obra pasa a «Aprobada»')}
+  else if(d.no){const c=O.find(x=>x.pst==='enviado');c.pst='rechazado';toast('Rechazado: el reformista puede replantearlo')}
+  else if(d.mod!==undefined){const m=MODS[+d.mod];o.mods.push({d:m.d,c:m.c,dias:m.dias,s:'pendiente'});toast('Cambio enviado al cliente')}
+  else if(d.opmod){const t=get(+d.opmod);t.mods.push({d:'Cambio registrado por el operario (con foto)',c:0,dias:0,s:'pendiente'});toast('Registrado: el reformista lo valora y lo envía')}
+  else if(d.mok!==undefined||d.mno!==undefined){const c=O.find(x=>x.mods.some(m=>m.s==='pendiente'));const m=c.mods[+(d.mok??d.mno)];m.s=d.mok!==undefined?'aprobado':'rechazado';toast(m.s==='aprobado'?'Cambio aprobado: el operario ya puede ejecutarlo':'Cambio rechazado')}
+  else if(d.unl!==undefined){o.mods[+d.unl].s='desbloqueado';toast('Desbloqueado: queda registrado con tu motivo')}
+  else if(d.adv){o.e++;toast('Obra en «'+E[o.e]+'»')}
+  else if(d.fase){o.fases.push({n:d.fase,p:0})}
+  else if(d.fp){const[i,k]=d.fp.split(',');const f=o.fases[+k];f.p=Math.min(100,f.p+25)}
+  else if(d.hito){o.hitos.push({n:'Entrada 30 %',i:Math.round(base(o)*1.21*.3),cob:false});toast('Hito anotado')}
+  else if(d.cob!==undefined){const h=o.hitos[+d.cob];h.cob=!h.cob}
+  else if(b.id==='reset'){O=seed();sel=1;view='ref'}
+  else return;
+  render();
+});
+render();
+</script>
+</body>
+</html>
