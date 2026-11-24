@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Planes de la carta digital · AppXpand</title>
+<meta name="description" content="Elige cuánto tiempo quieres tu carta digital con QR. Pago único con tarjeta, sin suscripción automática.">
+<meta name="theme-color" content="#0a0c14">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234a8eff'/%3E%3Cpath d='M13 10l-6 6 6 6M19 10l6 6-6 6' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+<style>
+.lp-top{border-bottom:1px solid var(--border)}
+.lp-top .container{display:flex;justify-content:space-between;align-items:center;gap:12px;height:64px}
+.lp-brand{font:700 1.25rem var(--font-heading);color:var(--fg);text-decoration:none}
+.pp{padding:64px 0 80px}
+.pp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:18px;max-width:1100px;margin:0 auto}
+.pp-card{position:relative;border-radius:var(--radius);padding:28px 22px;display:flex;flex-direction:column;gap:6px}
+.pp-card.best{border-color:rgba(74,142,255,.55);box-shadow:var(--shadow-glow)}
+.pp-badge{position:absolute;top:-12px;left:50%;transform:translateX(-50%);background:var(--gradient);color:#fff;font-size:.75rem;font-weight:600;padding:4px 14px;border-radius:99px;white-space:nowrap}
+.pp-card h3{font-size:1.2rem;margin:0}
+.pp-price{font:700 2.4rem var(--font-heading);line-height:1.1;margin:6px 0 0}
+.pp-per{color:var(--fg-muted);font-size:.9rem}
+.pp-save{color:#34d399;font-size:.85rem;min-height:1.3em;margin-bottom:12px}
+.pp-card .btn{width:100%;justify-content:center;margin-top:auto;cursor:pointer}
+.pp-card .btn:disabled{opacity:.6;cursor:wait}
+.incl{max-width:760px;margin:48px auto 0;border-radius:var(--radius);padding:24px 28px}
+.incl h3{margin:0 0 12px;font-size:1.1rem}
+.incl ul{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px 24px}
+.incl li{font-size:.92rem;color:var(--fg-secondary)}
+.incl li:before{content:"✓ ";color:var(--primary);font-weight:700}
+.foot{text-align:center;color:var(--fg-muted);font-size:.9rem;margin-top:28px;display:flex;flex-direction:column;gap:8px}
+.foot a{color:var(--fg-secondary)}
+</style>
+</head>
+<body>
+<header class="lp-top"><div class="container">
+  <a href="index.html" class="lp-brand"><span class="text-gradient">App</span>Xpand</a>
+  <a href="demo-carta.html" class="btn btn-outline btn-sm">← Volver a la demo</a>
+</div></header>
+
+<main class="pp"><div class="container">
+  <div class="section-header" style="margin-bottom:48px">
+    <h2>Elige cuánto tiempo quieres <span class="text-gradient">tu carta</span></h2>
+    <p>Pago único con tarjeta. Sin suscripción automática: cuando termine, renuevas tú si quieres seguir.</p>
+  </div>
+
+  <div class="pp-grid" id="planes">
+    <div class="pp-card glass"><h3>1 mes</h3><div class="pp-price">13 €</div><div class="pp-per">13,00 € al mes</div><div class="pp-save"></div><button class="btn btn-outline" data-m="1">Pagar con tarjeta</button></div>
+    <div class="pp-card glass"><h3>3 meses</h3><div class="pp-price">35 €</div><div class="pp-per">11,67 € al mes</div><div class="pp-save">Ahorras 4 €</div><button class="btn btn-outline" data-m="3">Pagar con tarjeta</button></div>
+    <div class="pp-card glass"><h3>6 meses</h3><div class="pp-price">65 €</div><div class="pp-per">10,83 € al mes</div><div class="pp-save">Ahorras 13 €</div><button class="btn btn-outline" data-m="6">Pagar con tarjeta</button></div>
+    <div class="pp-card glass best"><div class="pp-badge">Mejor precio</div><h3>12 meses</h3><div class="pp-price">110 €</div><div class="pp-per">9,17 € al mes</div><div class="pp-save">Ahorras 46 €</div><button class="btn btn-primary" data-m="12">Pagar con tarjeta</button></div>
+  </div>
+
+  <div class="incl glass">
+    <h3>Todos los planes incluyen</h3>
+    <ul>
+      <li>Cambios ilimitados de platos, precios y fotos</li>
+      <li>Colores, logo y títulos personalizados</li>
+      <li>Categorías y menús del día</li>
+      <li>QR para imprimir y descargar</li>
+      <li>Dirección propia: /c/tu-bar</li>
+      <li>Aviso por email antes de caducar</li>
+    </ul>
+  </div>
+
+  <div class="foot">
+    <span>🔒 Pago seguro gestionado por Stripe. Al pagar recibirás tu código por email.</span>
+    <span>¿Ya eres cliente? <a href="carta-panel.html">Entra a tu panel</a> y renueva desde allí.</span>
+    <span>¿Dudas? <a href="mailto:appxpandcontact@gmail.com">appxpandcontact@gmail.com</a></span>
+  </div>
+</div></main>
+
+<script>
+document.querySelectorAll("#planes button").forEach(function(b){b.addEventListener("click",async function(){
+  var t=b.textContent;b.disabled=true;b.textContent="Redirigiendo…";
+  try{
+    var r=await fetch("/api/crear-pago",{method:"POST",body:JSON.stringify({meses:+b.dataset.m})});
+    var d=await r.json();
+    if(d.url)location.href=d.url;else throw 0;
+  }catch(e){alert("No se pudo iniciar el pago. Inténtalo de nuevo.");b.disabled=false;b.textContent=t;}
+});});
+window.addEventListener("pageshow",function(e){if(e.persisted)document.querySelectorAll("#planes button").forEach(function(b){b.disabled=false;b.textContent="Pagar con tarjeta";});});
+</script>
+</body>
+</html>

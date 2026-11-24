@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Demo carta digital · AppXpand</title>
+<style>
+:root{--bg:#fff;--fg:#1a1a1a;--ac:#d62828;--mut:color-mix(in srgb,var(--fg) 62%,var(--bg));--line:color-mix(in srgb,var(--fg) 14%,var(--bg))}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.w{max-width:640px;margin:0 auto;padding:0 18px 60px}
+header{text-align:center;padding:32px 0 14px}
+header img{max-width:120px;max-height:120px;border-radius:12px;object-fit:contain;margin-bottom:10px}
+h1{margin:0;font-size:32px;line-height:1.15}
+.sub{color:var(--mut);margin:4px 0 0}
+nav{position:sticky;top:0;background:var(--bg);display:flex;gap:8px;overflow-x:auto;padding:10px 0;border-bottom:1px solid var(--line);z-index:2}
+nav a{white-space:nowrap;text-decoration:none;color:var(--fg);border:1px solid var(--line);padding:6px 14px;border-radius:99px;font-size:15px}
+nav a:hover,nav a:focus-visible{border-color:var(--ac);color:var(--ac);outline:none}
+section{padding-top:26px;scroll-margin-top:56px}
+h2{font-size:22px;margin:0 0 6px;color:var(--ac)}
+.item{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0}
+.txt{flex:1;min-width:0}
+.top{display:flex;justify-content:space-between;gap:12px;font-weight:600}
+.pr{white-space:nowrap}
+.desc{color:var(--mut);font-size:15px;margin:2px 0 0}
+.item img{width:88px;height:88px;object-fit:cover;border-radius:10px;flex:none}
+.menu{border:2px solid var(--ac);border-radius:14px;padding:14px 16px;margin-top:12px}
+.menu ul{margin:8px 0 0;padding-left:20px}
+.demo-banner{background:#16181d;color:#fff;text-align:center;font-size:13px;padding:8px 12px}.demo-banner a{color:#9cc1ff}
+.off{text-align:center;padding:30vh 20px;color:var(--mut)}
+</style>
+</head>
+<body>
+<div class="demo-banner">Demo · así verán tus clientes tu carta al escanear el QR · <a href="/#herramientas">Volver a AppXpand</a></div>
+<div id="root"></div>
+<script>
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const precio = p => { p = String(p ?? "").trim(); return /^\d+([.,]\d+)?$/.test(p) ? p.replace(".", ",") + " €" : p; };
+const okColor = c => /^#[0-9a-f]{6}$/i.test(c) ? c : null;
+const slug = decodeURIComponent(location.pathname.replace(/^\/c\//, "").replace(/\/$/, ""));
+
+(async () => {
+  const root = document.getElementById("root");
+  const d = { disponible: true, nombre: "Bar La Plaza", carta: {
+  titulo: "Carta de ejemplo", colores: { fondo: "#fffaf3", texto: "#2b1d14", acento: "#c2410c" }, logo: null,
+  menus: [{ nombre: "Menú del día", precio: "13,50", descripcion: "Bebida y café incluidos", incluye: ["Primer plato a elegir", "Segundo plato a elegir", "Postre o café"] }],
+  categorias: [
+    { nombre: "Para picar", platos: [
+      { nombre: "Croquetas caseras", descripcion: "Jamón ibérico, 6 uds.", precio: "9", visible: true },
+      { nombre: "Patatas bravas", descripcion: "Con salsa de la casa", precio: "6,50", visible: true },
+      { nombre: "Ensaladilla rusa", precio: "7", visible: true } ] },
+    { nombre: "Platos", platos: [
+      { nombre: "Hamburguesa La Plaza", descripcion: "Ternera, queso curado y cebolla caramelizada", precio: "12", visible: true },
+      { nombre: "Merluza a la plancha", descripcion: "Con verduras salteadas", precio: "15", visible: true } ] },
+    { nombre: "Postres", platos: [
+      { nombre: "Tarta de queso", precio: "5,50", visible: true },
+      { nombre: "Flan casero", precio: "4", visible: true } ] }
+  ] } };
+  if (!d.disponible) { root.innerHTML = `<div class="off"><h1>Carta no disponible</h1><p>Pregunta en barra y te la enseñamos.</p></div>`; return; }
+
+  const c = d.carta, col = c.colores || {};
+  const r = document.documentElement.style;
+  if (okColor(col.fondo)) r.setProperty("--bg", col.fondo);
+  if (okColor(col.texto)) r.setProperty("--fg", col.texto);
+  if (okColor(col.acento)) r.setProperty("--ac", col.acento);
+  document.title = d.nombre + " · " + (c.titulo || "Carta");
+
+  const cats = (c.categorias || []).map(k => ({ ...k, platos: (k.platos || []).filter(p => p.visible !== false && p.nombre) })).filter(k => k.platos.length && k.nombre);
+  const menus = (c.menus || []).filter(m => m.nombre);
+
+  const html = [];
+  html.push(`<header>${c.logo ? `<img src="${esc(c.logo)}" alt="">` : ""}<h1>${esc(c.titulo || "Nuestra carta")}</h1><p class="sub">${esc(d.nombre)}</p></header>`);
+  const links = [...(menus.length ? [["menus", "Menús"]] : []), ...cats.map((k, i) => ["c" + i, k.nombre])];
+  if (links.length > 1) html.push(`<nav>${links.map(([id, n]) => `<a href="#${id}">${esc(n)}</a>`).join("")}</nav>`);
+
+  if (menus.length) html.push(`<section id="menus"><h2>Menús</h2>${menus.map(m => `
+    <div class="menu"><div class="top"><span>${esc(m.nombre)}</span><span class="pr">${esc(precio(m.precio))}</span></div>
+    ${m.descripcion ? `<p class="desc">${esc(m.descripcion)}</p>` : ""}
+    ${(m.incluye || []).length ? `<ul>${m.incluye.map(i => `<li>${esc(i)}</li>`).join("")}</ul>` : ""}</div>`).join("")}</section>`);
+
+  cats.forEach((k, i) => html.push(`<section id="c${i}"><h2>${esc(k.nombre)}</h2>${k.platos.map(p => `
+    <div class="item"><div class="txt"><div class="top"><span>${esc(p.nombre)}</span><span class="pr">${esc(precio(p.precio))}</span></div>
+    ${p.descripcion ? `<p class="desc">${esc(p.descripcion)}</p>` : ""}</div>
+    ${p.imagen ? `<img src="${esc(p.imagen)}" alt="" loading="lazy">` : ""}</div>`).join("")}</section>`));
+
+  if (!cats.length && !menus.length) html.push(`<div class="off">Estamos preparando la carta.</div>`);
+  root.innerHTML = `<div class="w">${html.join("")}</div>`;
+})();
+</script>
+</body>
+</html>
