@@ -16,7 +16,7 @@ export default async () => {
           to: bar.email,
           subject: `Tu carta caduca en ${dias} ${dias == 1 ? "día" : "días"}`,
           html: `<p>Hola, tu carta de <b>${bar.nombre}</b> caduca el ${new Date(bar.fecha_fin).toLocaleDateString("es-ES")}.</p>
-                 <p>Renueva aquí para que tus clientes no se queden sin carta: <a href="${base}/#herramientas">${base}</a></p>`,
+                 <p>Renueva aquí para que tus clientes no se queden sin carta: <a href="${base}/carta-planes.html">${base}/carta-planes.html</a></p>`,
         });
         bar.avisado = true;
         await store.setJSON(bar.id, bar);

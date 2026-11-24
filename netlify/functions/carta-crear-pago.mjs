@@ -30,7 +30,7 @@ export default async (req) => {
     ],
     metadata: { meses: String(meses) },
     success_url: `${base}/carta-gracias.html`,
-    cancel_url: `${base}/#herramientas`,
+    cancel_url: `${base}/carta-planes.html`,
     // Stripe ya pide el email, no hace falta formulario propio
   });
 
