@@ -591,3 +591,11 @@ body { overflow-x: hidden; }
   .nav-access-t { display: none; }
   .nav-access { padding: 8px; }
 }
+
+/* Carta digital · compra */
+.carta-planes { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; width: 100%; margin-top: 8px; }
+.carta-planes button { background: var(--bg-card); color: var(--fg); border: 1px solid var(--border); border-radius: 10px; padding: 10px 8px; font: inherit; font-size: .85rem; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 2px; transition: border-color .2s, transform .2s; }
+.carta-planes button b { font-size: .8rem; color: var(--fg-secondary); font-weight: 500; }
+.carta-planes button:hover:not(:disabled) { border-color: var(--primary); transform: translateY(-2px); }
+.carta-planes button:disabled { opacity: .5; cursor: wait; }
+.carta-code { font-size: .8rem; color: var(--fg-muted); text-decoration: underline; margin-top: 6px; }

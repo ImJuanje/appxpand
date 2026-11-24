@@ -1,0 +1,323 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Panel de tu carta · AppXpand</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+<style>
+:root{--bg:#f3f4f6;--card:#fff;--ink:#16181d;--mut:#6b7280;--line:#e2e4e9;--ac:#0f766e;--ac-ink:#fff;--bad:#b42318}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+button,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer;border:1px solid var(--line);background:var(--card);padding:8px 12px;border-radius:8px}
+button:hover{border-color:#b9bdc6}
+button.pri{background:var(--ac);color:var(--ac-ink);border-color:var(--ac)}
+button.pri:disabled{opacity:.45;cursor:default}
+button.del{color:var(--bad)}
+input,textarea{width:100%;padding:9px 10px;border:1px solid var(--line);border-radius:8px;background:#fff}
+textarea{resize:vertical;min-height:56px}
+:focus-visible{outline:2px solid var(--ac);outline-offset:2px}
+label{display:block;font-size:14px;color:var(--mut);margin:14px 0 4px}
+.wrap{max-width:760px;margin:0 auto;padding:0 16px 80px}
+.login{max-width:380px;margin:18vh auto;padding:0 16px}
+.login h1{font-size:26px;margin:0 0 6px}
+.login p{color:var(--mut);margin:0 0 18px}
+.login input{font-size:20px;letter-spacing:2px;text-transform:uppercase;text-align:center;margin-bottom:10px}
+.login button{width:100%;padding:12px}
+.err{color:var(--bad);font-size:14px;min-height:20px;margin-top:8px}
+header.top{position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
+.top .in{max-width:760px;margin:0 auto;padding:10px 16px;display:flex;gap:12px;align-items:center;justify-content:space-between}
+.top b{display:block;line-height:1.2}
+.top small{color:var(--mut)}
+nav.tabs{display:flex;gap:4px;max-width:760px;margin:0 auto;padding:0 16px;overflow-x:auto}
+nav.tabs button{border:0;border-bottom:3px solid transparent;border-radius:0;background:none;padding:10px 12px;color:var(--mut);white-space:nowrap}
+nav.tabs button.on{color:var(--ink);border-bottom-color:var(--ac);font-weight:600}
+.banner{background:#fff4e5;border:1px solid #f5c98a;border-radius:10px;padding:14px;margin:16px 0}
+.banner p{margin:0 0 10px}
+.planes{display:flex;gap:8px;flex-wrap:wrap}
+.cat{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin:16px 0}
+.cat-head{display:flex;gap:8px;align-items:center;margin-bottom:10px}
+.cat-name{font-weight:700;font-size:18px}
+.precio{max-width:110px}
+.plato{display:grid;grid-template-columns:84px 1fr;gap:12px;padding:12px 0;border-top:1px solid var(--line)}
+.foto{width:84px;height:84px;border-radius:10px;border:1px dashed #b9bdc6;background:#fafafa;display:flex;align-items:center;justify-content:center;text-align:center;font-size:12px;color:var(--mut);padding:0;overflow:hidden}
+.foto img{width:100%;height:100%;object-fit:cover}
+.row{display:flex;gap:8px;align-items:center}
+.row.sp{justify-content:space-between;margin-top:6px}
+.chk{display:flex;gap:6px;align-items:center;font-size:14px;color:var(--mut);margin:0}
+.chk input{width:auto}
+.empty{color:var(--mut);padding:30px 0;text-align:center}
+.cols{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.cols input[type=color]{height:44px;padding:2px}
+.qrbox{text-align:center;padding:10px 0}
+.qrbox canvas{max-width:260px;width:100%;height:auto;border:1px solid var(--line);border-radius:8px;background:#fff}
+.url{font-family:ui-monospace,monospace;font-size:14px;word-break:break-all;color:var(--mut)}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:10px 16px;border-radius:8px;opacity:0;pointer-events:none;transition:opacity .2s}
+#toast.on{opacity:1}
+@media(max-width:520px){.cols{grid-template-columns:1fr}.plato{grid-template-columns:70px 1fr}.foto{width:70px;height:70px}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div id="login" class="login" hidden>
+  <h1>Entra a tu carta</h1>
+  <p>Escribe el código que te enviamos por email.</p>
+  <input id="codigo" placeholder="XXXX-XXXX-XXXX" autocomplete="off" autocapitalize="characters">
+  <button class="pri" id="entrar">Entrar</button>
+  <div class="err" id="loginErr"></div>
+</div>
+
+<div id="app" hidden>
+  <header class="top">
+    <div class="in">
+      <div><b id="hNombre"></b><small id="hEstado"></small></div>
+      <button class="pri" id="guardar" disabled>Guardar cambios</button>
+    </div>
+    <nav class="tabs" id="tabs"></nav>
+  </header>
+  <main class="wrap" id="main"></main>
+</div>
+<div id="toast"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid = () => Math.random().toString(36).slice(2, 8);
+const PLANES = [[1,"1 mes","13 €"],[3,"3 meses","35 €"],[6,"6 meses","65 €"],[12,"12 meses","110 €"]];
+const TABS = [["carta","Carta"],["menus","Menús"],["diseno","Diseño"],["qr","QR y ajustes"]];
+
+let token = localStorage.getItem("ax_token"), bar = null, dirty = false, tab = "carta";
+
+/* ---------- utilidades ---------- */
+function toast(t){ const el=$("#toast"); el.textContent=t; el.classList.add("on"); clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove("on"),2500); }
+
+async function api(path, opts = {}) {
+  const headers = { ...(opts.headers || {}) };
+  if (token) headers.Authorization = "Bearer " + token;
+  const r = await fetch(path, { ...opts, headers });
+  const data = await r.json().catch(() => ({}));
+  if (r.status === 401 && token && path !== "/api/login") { salir(); throw new Error("Sesión caducada. Vuelve a entrar."); }
+  if (!r.ok) throw new Error(data.error || "Error inesperado");
+  return data;
+}
+
+function setPath(path, val) {
+  const k = path.split("."); let o = bar;
+  for (let i = 0; i < k.length - 1; i++) o = o[k[i]];
+  o[k[k.length - 1]] = val;
+}
+function mark(){ dirty = true; $("#guardar").disabled = false; $("#guardar").textContent = "Guardar cambios"; }
+window.addEventListener("beforeunload", e => { if (dirty) { e.preventDefault(); e.returnValue = ""; } });
+
+/* ---------- login ---------- */
+async function entrar() {
+  $("#loginErr").textContent = "";
+  try {
+    const r = await api("/api/login", { method: "POST", body: JSON.stringify({ codigo: $("#codigo").value }) });
+    token = r.token; localStorage.setItem("ax_token", token);
+    await cargar();
+  } catch (e) { $("#loginErr").textContent = e.message; }
+}
+function salir() { token = null; bar = null; localStorage.removeItem("ax_token"); $("#app").hidden = true; $("#login").hidden = false; }
+$("#entrar").onclick = entrar;
+$("#codigo").addEventListener("keydown", e => { if (e.key === "Enter") entrar(); });
+
+async function cargar() {
+  bar = await api("/api/carta");
+  const c = bar.carta;
+  c.categorias ||= []; c.menus ||= []; c.colores ||= { fondo:"#ffffff", texto:"#1a1a1a", acento:"#d62828" };
+  $("#login").hidden = true; $("#app").hidden = false;
+  dirty = false; render();
+}
+
+/* ---------- render ---------- */
+function render() {
+  $("#hNombre").textContent = bar.nombre;
+  const fin = new Date(bar.fecha_fin).toLocaleDateString("es-ES");
+  $("#hEstado").textContent = bar.activo ? "Activa hasta el " + fin : "Caducada el " + fin;
+  $("#tabs").innerHTML = TABS.map(([k, n]) => `<button data-a="tab" data-k="${k}" class="${k === tab ? "on" : ""}">${n}</button>`).join("");
+  const banner = bar.activo ? "" : `<div class="banner"><p><b>Tu suscripción ha caducado.</b> Tu carta pública está oculta y no puedes editar. Renueva para reactivarla al momento:</p><div class="planes">${PLANES.map(([m, n, p]) => `<button class="pri" data-a="renovar" data-m="${m}">${n} · ${p}</button>`).join("")}</div></div>`;
+  const vistas = { carta: vCarta, menus: vMenus, diseno: vDiseno, qr: vQr };
+  $("#main").innerHTML = banner + vistas[tab]();
+  if (tab === "qr") drawQr();
+}
+
+function vCarta() {
+  const cs = bar.carta.categorias;
+  const lista = cs.map((c, ci) => `
+  <section class="cat">
+    <div class="cat-head">
+      <input class="cat-name" data-path="carta.categorias.${ci}.nombre" value="${esc(c.nombre)}" placeholder="Nombre de la categoría">
+      <button data-a="cat-up" data-c="${ci}" aria-label="Subir">↑</button>
+      <button data-a="cat-down" data-c="${ci}" aria-label="Bajar">↓</button>
+      <button class="del" data-a="cat-del" data-c="${ci}">Borrar</button>
+    </div>
+    ${c.platos.map((p, pi) => { const b = `carta.categorias.${ci}.platos.${pi}`; return `
+    <div class="plato">
+      <button class="foto" data-a="img" data-path="${b}.imagen">${p.imagen ? `<img src="${esc(p.imagen)}" alt="">` : "Añadir foto"}</button>
+      <div>
+        <div class="row"><input data-path="${b}.nombre" value="${esc(p.nombre)}" placeholder="Nombre del plato"><input class="precio" data-path="${b}.precio" value="${esc(p.precio)}" placeholder="Precio" inputmode="decimal"></div>
+        <textarea data-path="${b}.descripcion" placeholder="Descripción (opcional)" style="margin-top:8px">${esc(p.descripcion)}</textarea>
+        <div class="row sp">
+          <label class="chk"><input type="checkbox" data-path="${b}.visible" ${p.visible !== false ? "checked" : ""}> Disponible</label>
+          <span>${p.imagen ? `<button data-a="img-del" data-path="${b}.imagen">Quitar foto</button> ` : ""}<button class="del" data-a="plato-del" data-c="${ci}" data-p="${pi}">Borrar plato</button></span>
+        </div>
+      </div>
+    </div>`; }).join("")}
+    <button data-a="plato-add" data-c="${ci}">+ Añadir plato</button>
+  </section>`).join("");
+  return (cs.length ? lista : `<div class="empty">Aún no tienes categorías.<br>Crea la primera, por ejemplo «Bebidas» o «Tapas».</div>`) + `<button class="pri" data-a="cat-add">+ Nueva categoría</button>`;
+}
+
+function vMenus() {
+  const ms = bar.carta.menus;
+  const lista = ms.map((m, i) => `
+  <section class="cat">
+    <div class="cat-head">
+      <input class="cat-name" data-path="carta.menus.${i}.nombre" value="${esc(m.nombre)}" placeholder="Menú del día">
+      <input class="precio" data-path="carta.menus.${i}.precio" value="${esc(m.precio)}" placeholder="Precio" inputmode="decimal">
+      <button class="del" data-a="menu-del" data-i="${i}">Borrar</button>
+    </div>
+    <label>Descripción (opcional)</label>
+    <textarea data-path="carta.menus.${i}.descripcion">${esc(m.descripcion)}</textarea>
+    <label>Qué incluye (un plato por línea)</label>
+    <textarea data-lines data-path="carta.menus.${i}.incluye" rows="5">${esc((m.incluye || []).join("\n"))}</textarea>
+  </section>`).join("");
+  return (ms.length ? lista : `<div class="empty">Aún no tienes menús.<br>Crea uno, por ejemplo el menú del día.</div>`) + `<button class="pri" data-a="menu-add">+ Nuevo menú</button>`;
+}
+
+function vDiseno() {
+  const c = bar.carta;
+  return `<section class="cat">
+    <label>Título de la carta</label>
+    <input data-path="carta.titulo" value="${esc(c.titulo)}">
+    <label>Colores (fondo, texto, acento)</label>
+    <div class="cols">
+      <input type="color" data-path="carta.colores.fondo" value="${esc(c.colores.fondo)}">
+      <input type="color" data-path="carta.colores.texto" value="${esc(c.colores.texto)}">
+      <input type="color" data-path="carta.colores.acento" value="${esc(c.colores.acento)}">
+    </div>
+    <label>Logo</label>
+    <div class="row"><button class="foto" data-a="img" data-path="carta.logo">${c.logo ? `<img src="${esc(c.logo)}" alt="">` : "Subir logo"}</button>${c.logo ? `<button data-a="img-del" data-path="carta.logo">Quitar logo</button>` : ""}</div>
+  </section>
+  <p class="url">Pulsa «Guardar cambios» y abre tu carta para ver cómo queda.</p>
+  <a href="/c/${esc(bar.slug)}" target="_blank" rel="noopener"><button>Ver mi carta</button></a>`;
+}
+
+function urlCarta() { return location.origin + "/c/" + bar.slug; }
+
+function vQr() {
+  return `<section class="cat">
+    <label>Nombre del bar</label>
+    <input data-path="nombre" value="${esc(bar.nombre)}">
+    <label>Dirección de tu carta</label>
+    <div class="row"><span class="url">${esc(location.origin)}/c/</span><input data-path="slug" value="${esc(bar.slug)}"></div>
+    <p class="url">Si cambias la dirección, el QR cambia. Imprímelo después de guardar y no la toques más.</p>
+  </section>
+  <section class="cat qrbox">
+    <canvas id="qr"></canvas>
+    <p class="url" id="qrUrl"></p>
+    <div class="row" style="justify-content:center"><button class="pri" data-a="imprimir">Imprimir QR</button><button data-a="bajar">Descargar PNG</button></div>
+  </section>
+  <button data-a="salir">Cerrar sesión</button>`;
+}
+
+function drawQr() {
+  $("#qrUrl").textContent = urlCarta();
+  new QRious({ element: $("#qr"), value: urlCarta(), size: 800, padding: 24, level: "M" });
+}
+
+/* ---------- imágenes ---------- */
+function comprimir(file) {
+  return new Promise((ok, ko) => {
+    const img = new Image();
+    img.onload = () => {
+      const k = Math.min(1, 800 / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      c.toBlob(b => b ? ok(b) : ko(new Error("No se pudo procesar la imagen")), "image/webp", 0.8);
+    };
+    img.onerror = () => ko(new Error("Esa imagen no es válida"));
+    img.src = URL.createObjectURL(file);
+  });
+}
+function elegirImagen(path) {
+  const inp = document.createElement("input");
+  inp.type = "file"; inp.accept = "image/*";
+  inp.onchange = async () => {
+    if (!inp.files[0]) return;
+    toast("Subiendo foto…");
+    try {
+      const blob = await comprimir(inp.files[0]);
+      const r = await api("/api/subir-imagen", { method: "POST", headers: { "Content-Type": blob.type }, body: blob });
+      setPath(path, r.url); mark(); render(); toast("Foto añadida");
+    } catch (e) { toast(e.message); }
+  };
+  inp.click();
+}
+
+/* ---------- guardar ---------- */
+async function guardar() {
+  $("#guardar").disabled = true; $("#guardar").textContent = "Guardando…";
+  try {
+    const r = await api("/api/carta", { method: "PUT", body: JSON.stringify({ nombre: bar.nombre, slug: bar.slug, carta: bar.carta }) });
+    bar.slug = r.slug; dirty = false; $("#guardar").textContent = "Guardado ✓"; render();
+  } catch (e) { toast(e.message); mark(); }
+}
+$("#guardar").onclick = guardar;
+
+/* ---------- eventos ---------- */
+document.addEventListener("input", e => {
+  const t = e.target, p = t.dataset && t.dataset.path;
+  if (!p || t.tagName === "BUTTON") return;
+  let v = t.type === "checkbox" ? t.checked : t.value;
+  if (t.hasAttribute("data-lines")) v = v.split("\n").map(s => s.trim()).filter(Boolean);
+  setPath(p, v); mark();
+});
+
+function mover(arr, i, d) { const j = i + d; if (j < 0 || j >= arr.length) return; [arr[i], arr[j]] = [arr[j], arr[i]]; }
+
+document.addEventListener("click", async e => {
+  const b = e.target.closest("[data-a]"); if (!b) return;
+  const d = b.dataset, c = bar && bar.carta;
+  switch (d.a) {
+    case "tab": tab = d.k; return render();
+    case "cat-add": c.categorias.push({ id: uid(), nombre: "", platos: [] }); break;
+    case "cat-del": if (!confirm("¿Borrar la categoría y todos sus platos?")) return; c.categorias.splice(+d.c, 1); break;
+    case "cat-up": mover(c.categorias, +d.c, -1); break;
+    case "cat-down": mover(c.categorias, +d.c, 1); break;
+    case "plato-add": c.categorias[+d.c].platos.push({ id: uid(), nombre: "", descripcion: "", precio: "", imagen: null, visible: true }); break;
+    case "plato-del": if (!confirm("¿Borrar este plato?")) return; c.categorias[+d.c].platos.splice(+d.p, 1); break;
+    case "menu-add": c.menus.push({ id: uid(), nombre: "", precio: "", descripcion: "", incluye: [] }); break;
+    case "menu-del": if (!confirm("¿Borrar este menú?")) return; c.menus.splice(+d.i, 1); break;
+    case "img": return elegirImagen(d.path);
+    case "img-del": setPath(d.path, null); break;
+    case "imprimir": return imprimir();
+    case "bajar": { const a = document.createElement("a"); a.download = "qr-carta.png"; a.href = $("#qr").toDataURL("image/png"); a.click(); return; }
+    case "salir": return salir();
+    case "renovar":
+      try {
+        const r = await api("/api/crear-pago", { method: "POST", body: JSON.stringify({ meses: +d.m }) });
+        location.href = r.url;
+      } catch (err) { toast(err.message); }
+      return;
+  }
+  mark(); render();
+});
+
+function imprimir() {
+  const img = $("#qr").toDataURL("image/png");
+  const w = window.open("", "_blank");
+  w.document.write(`<title>QR carta</title><body style="font-family:system-ui;text-align:center;padding:40px"><h1 style="font-size:40px;margin:0 0 20px">${esc(bar.nombre)}</h1><img src="${img}" style="width:420px;max-width:100%"><p style="font-size:26px;margin-top:16px">Escanea y mira nuestra carta</p><script>onload=()=>print()<\/script></body>`);
+  w.document.close();
+}
+
+/* ---------- arranque ---------- */
+if (token) cargar().catch(() => { $("#login").hidden = false; }); else $("#login").hidden = false;
+</script>
+</body>
+</html>

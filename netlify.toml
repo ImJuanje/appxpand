@@ -1,3 +1,9 @@
 [build]
   publish = "."
   functions = "netlify/functions"
+
+# Carta digital pública: appxpand.netlify.app/c/nombre-bar
+[[redirects]]
+  from = "/c/*"
+  to = "/carta.html"
+  status = 200
