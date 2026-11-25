@@ -25,10 +25,13 @@ async function borrarCodigosDe(id) {
   for (const { key } of blobs) if ((await st.get(key)) === id) await st.delete(key);
 }
 
-export default async (req, context) => {
+async function manejar(req, context) {
   if (req.method !== "POST") return json({ error: "método" }, 405);
   if ((process.env.ADMIN_KEY || "").length < 12)
     return json({ error: "Falta la variable ADMIN_KEY en Netlify (mínimo 12 caracteres)." }, 500);
+  // Sin SESSION_SECRET no se pueden generar ni validar códigos (hashCodigo falla y Netlify responde 502)
+  if ((process.env.SESSION_SECRET || "").length < 16)
+    return json({ error: "Falta la variable SESSION_SECRET en Netlify (mínimo 16 caracteres). Añádela y vuelve a desplegar." }, 500);
 
   // Límite de intentos fallidos: 10 cada 15 min por IP
   const intentos = getStore("intentos");
@@ -107,6 +110,16 @@ export default async (req, context) => {
 
     default:
       return json({ error: "acción no válida" }, 400);
+  }
+}
+
+// Cualquier fallo inesperado (blobs, red, etc.) se devuelve como JSON legible en vez de un 502 mudo
+export default async (req, context) => {
+  try {
+    return await manejar(req, context);
+  } catch (e) {
+    console.error("carta-admin:", e);
+    return json({ error: "Error del servidor: " + (e && e.message ? e.message : e) }, 500);
   }
 };
 
