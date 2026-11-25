@@ -44,7 +44,7 @@
       rel:['mantenimiento','contacto']},
     proceso:{label:'Cómo trabajamos',sub:'Tres pasos, sin tecnicismos',
       kw:['como trabajais','como trabajan','proceso','pasos','como funciona','metodologia','que tengo que hacer','que necesitais','que necesitan'],
-      a:['Tres pasos, sin que tengas que aprender nada técnico:','1. Revisamos cómo te ven hoy: perfil, web y reseñas frente a tu zona, y te contamos qué falla.','2. Lo montamos todo: configuramos el perfil, publicamos la web y te entregamos la tarjeta de reseñas. Tú solo aportas fotos y datos.','3. Mejoramos e informamos: seguimiento de tu puntuación, revisión de SEO cada 3 meses e informe de lo que ha entrado.'],
+      a:['Tres pasos, sin que tengas que aprender nada técnico:','1. Vemos qué necesitas: cómo te ven hoy y qué te quita más tiempo.','2. Lo ponemos en marcha: web, perfil de Google o herramienta. Te decimos qué datos necesitamos.','3. Seguimos contigo: soporte, mantenimiento y seguimiento según el servicio y el plan.'],
       rel:['plazos','precios','contacto']},
     plazos:{label:'Plazos y resultados',sub:'Cuándo se nota',
       kw:['plazo','plazos','cuanto tarda','tarda','tiempo','cuando','resultados','garantia','garantizar','rapido','entrega'],
@@ -54,6 +54,18 @@
       kw:['condiciones','iva','dominio','dominios','acumulan','ilimitado','presupuesto aparte','integraciones','compleja','funcionalidades','terceros','contrato'],
       a:['- Las horas de desarrollo se renuevan cada mes y no se acumulan.','- Se cuentan por tiempo real dedicado; no son desarrollo ilimitado.','- Funcionalidades complejas, proyectos grandes e integraciones se presupuestan aparte.','- El mantenimiento es opcional y se contrata aparte.','- Dominios y servicios de terceros no incluidos salvo que se indique.','- Los packs se pagan por adelantado; descuentos no acumulables.'],
       rel:['mantenimiento','contacto']},
+    carta:{label:'Carta digital',sub:'Para bares y restaurantes',
+      kw:['carta','carta digital','precio carta','precio de la carta','cuanto cuesta la carta','menu del dia','restaurante','bar','cafeteria'],
+      a:['Tus clientes ven la carta escaneando un QR y tú cambias platos, precios y fotos cuando quieras.','- 1 mes: 13 €','- 3 meses: 35 €','- 6 meses: 65 €','- 12 meses: 110 €','Pago por transferencia, sin suscripción automática. La activamos al confirmar el pago.'],
+      rel:['contacto']},
+    taller:{label:'Gestión para talleres',sub:'TallerAppXpand',
+      kw:['taller','talleres','tallerappxpand','mecanico','coche'],
+      a:['TallerAppXpand: cada coche, de la recepción a la entrega. El mecánico prepara el presupuesto y el cliente lo aprueba desde el móvil.','Pide información y vemos si encaja en tu taller.'],
+      rel:['contacto']},
+    obras:{label:'Gestión para reformas',sub:'Obras',
+      kw:['obras','obra menor','reforma','reformas','reformista','albanil'],
+      a:['Obras: del presupuesto a los cambios de obra, que el cliente aprueba desde su móvil.','Pide información y vemos si encaja en tu empresa.'],
+      rel:['contacto']},
     llamada:{label:'Quiero una llamada',sub:'Hablar con el equipo',
       kw:['llamada','llamar','cita','agendar','reunion','reservar','reserva','disponibilidad','hueco','videollamada','teams','hablar','telefono','llamadme'],
       a:['Aún no puedo reservar citas aquí, pero lo resolvemos rápido: deja tus datos en el formulario y te contactamos en menos de 24 horas, o llámanos directamente al '+PHONE+'.'],
@@ -64,7 +76,7 @@
       a:['Empezamos por una revisión gratuita de tu negocio: dinos cómo se llama y dónde está, y respondemos en menos de 24 horas con lo que hemos visto.','Email: '+MAIL,'Teléfono: '+PHONE,'Zonas: Albacete · Ciudad Real · Alicante'],
       act:CTA_CONTACT, rel:[]}
   };
-  var MENU=['precios','google','lanzadera','mantenimiento','proceso','llamada','contacto'];
+  var MENU=['precios','google','carta','taller','obras','lanzadera','mantenimiento','proceso','llamada','contacto'];
   T.llamada.a=['Reserva tú mismo el día y la hora para una llamada o videollamada de 30 min. Se comprueba al momento que el hueco esté libre y te llega la invitación por email.'];
   T.llamada.act=[{t:'📅 Elegir día y hora',fn:function(){startBooking();},cta:1},{t:'Prefiero que me llaméis vosotros',href:'#contacto'},{t:'Llamar al '+PHONE,href:'tel:+34633860865'}];
   T.llamada.label='Reservar llamada o reunión';T.llamada.sub='Elige día y hora';
