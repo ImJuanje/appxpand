@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Admin cartas · AppXpand</title>
+<style>
+:root{--bg:#f3f4f6;--card:#fff;--ink:#16181d;--mut:#6b7280;--line:#e2e4e9;--ac:#0f766e;--bad:#b42318;--warn:#b45309}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.w{max-width:960px;margin:0 auto;padding:20px 16px 60px}
+h1{font-size:22px;margin:0 0 4px}h2{font-size:17px;margin:0 0 12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px;margin-top:16px}
+input,select,button{font:inherit}
+input,select{border:1px solid var(--line);border-radius:8px;padding:8px 10px;background:#fff;min-width:0}
+button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:8px 12px;cursor:pointer}
+button:hover{border-color:var(--ac)}
+button.pri{background:var(--ac);color:#fff;border-color:var(--ac)}
+button.bad:hover{border-color:var(--bad);color:var(--bad)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:end}
+.f{display:flex;flex-direction:column;gap:4px;flex:1;min-width:150px}
+.f label{font-size:12px;color:var(--mut)}
+.mut{color:var(--mut);font-size:13px}
+.err{color:var(--bad);margin-top:8px;min-height:1.2em}
+.codebox{background:#ecfdf5;border:1px solid #a7f3d0;border-radius:10px;padding:14px;margin-top:14px}
+.code{font:700 26px ui-monospace,Menlo,monospace;letter-spacing:2px;margin:6px 0;user-select:all}
+textarea{width:100%;min-height:110px;border:1px solid var(--line);border-radius:8px;padding:8px;font:inherit;font-size:14px;margin-top:6px}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12px;color:var(--mut);font-weight:600}
+.tag{display:inline-block;border-radius:99px;padding:2px 9px;font-size:12px;font-weight:600}
+.ok{background:#d1fae5;color:#065f46}.soon{background:#fef3c7;color:var(--warn)}.off{background:#fee2e2;color:var(--bad)}
+.acts{display:flex;gap:6px;flex-wrap:wrap}
+.acts button{padding:5px 9px;font-size:13px}
+.acts select{padding:5px;font-size:13px}
+@media(max-width:700px){thead{display:none}tr{display:block;border-bottom:1px solid var(--line);padding:8px 0}td{display:block;border:0;padding:3px 0}}
+</style>
+</head>
+<body>
+<div class="w">
+  <h1>Admin de cartas</h1>
+  <p class="mut">Crea clientes, genera sus códigos y renueva sus planes cuando confirmes la transferencia.</p>
+
+  <div class="card" id="login">
+    <h2>Entrar</h2>
+    <div class="row"><div class="f"><label for="k">Clave de admin</label><input id="k" type="password" autocomplete="current-password"></div><button class="pri" id="ent">Entrar</button></div>
+    <div class="err" id="lerr"></div>
+  </div>
+
+  <div id="app" hidden>
+    <div class="card">
+      <h2>Nuevo cliente</h2>
+      <div class="row">
+        <div class="f"><label for="n">Nombre del bar</label><input id="n" maxlength="80" placeholder="Bar La Plaza"></div>
+        <div class="f"><label for="c">Contacto (email o teléfono)</label><input id="c" maxlength="120" placeholder="612345678 o correo"></div>
+        <div class="f" style="flex:0 0 130px"><label for="m">Meses pagados</label><select id="m"><option value="1">1 mes</option><option value="3">3 meses</option><option value="6">6 meses</option><option value="12">12 meses</option></select></div>
+        <button class="pri" id="crear">Generar código</button>
+      </div>
+      <div class="err" id="cerr"></div>
+      <div class="codebox" id="res" hidden>
+        <div class="mut" id="resT"></div>
+        <div class="code" id="resC"></div>
+        <div class="mut">Guárdalo o envíaselo ya: por seguridad no se puede volver a ver. Si lo pierden, genera uno nuevo.</div>
+        <textarea id="msg" readonly></textarea>
+        <div class="row" style="margin-top:8px"><button id="cp">Copiar mensaje</button><a id="wa" target="_blank" rel="noopener" hidden><button>Abrir WhatsApp</button></a></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="row" style="justify-content:space-between;align-items:center"><h2 style="margin:0">Clientes</h2><button id="rec">Actualizar</button></div>
+      <table style="margin-top:10px"><thead><tr><th>Bar</th><th>Estado</th><th>Contacto</th><th>Acciones</th></tr></thead><tbody id="tb"></tbody></table>
+      <p class="mut" id="vacio" hidden>Aún no hay clientes.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+let KEY = sessionStorage.getItem("axk") || "";
+const fmt = d => new Date(d).toLocaleDateString("es-ES");
+
+async function api(body) {
+  const r = await fetch("/api/admin-carta", { method: "POST", headers: { "x-admin-key": KEY, "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok) throw new Error(d.error || "Error " + r.status);
+  return d;
+}
+
+function mensaje(nombre, codigo, fin) {
+  return `¡Hola! Ya tienes lista tu carta digital de ${nombre} 🍽️\n\nEntra aquí: ${location.origin}/carta-panel.html\nTu código personal: ${codigo}\n\nGuárdalo bien, es tu llave de acceso. Tu carta estará activa hasta el ${fmt(fin)}.`;
+}
+function mostrarCodigo(titulo, nombre, codigo, fin, contacto) {
+  $("#res").hidden = false;
+  $("#resT").textContent = titulo;
+  $("#resC").textContent = codigo;
+  const m = mensaje(nombre, codigo, fin);
+  $("#msg").value = m;
+  const tel = String(contacto || "").replace(/[^\d]/g, "");
+  const wa = $("#wa");
+  if (tel.length >= 9 && !String(contacto).includes("@")) { wa.href = "https://wa.me/" + (tel.length === 9 ? "34" + tel : tel) + "?text=" + encodeURIComponent(m); wa.hidden = false; } else wa.hidden = true;
+  $("#res").scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+async function cargar() {
+  const { bares } = await api({ accion: "listar" });
+  $("#vacio").hidden = bares.length > 0;
+  $("#tb").innerHTML = bares.map(b => {
+    const dias = Math.ceil((new Date(b.fecha_fin) - Date.now()) / 86400000);
+    const tag = !b.activo ? `<span class="tag off">Caducada el ${fmt(b.fecha_fin)}</span>` : dias <= 7 ? `<span class="tag soon">Caduca en ${dias} d · ${fmt(b.fecha_fin)}</span>` : `<span class="tag ok">Activa hasta ${fmt(b.fecha_fin)}</span>`;
+    return `<tr data-id="${esc(b.id)}" data-n="${esc(b.nombre)}" data-c="${esc(b.contacto)}">
+      <td><b>${esc(b.nombre)}</b><br><a class="mut" href="/c/${esc(b.slug)}" target="_blank" rel="noopener">/c/${esc(b.slug)}</a></td>
+      <td>${tag}</td><td class="mut">${esc(b.contacto) || "—"}</td>
+      <td><div class="acts"><select aria-label="Meses a sumar"><option value="1">+1 mes</option><option value="3">+3</option><option value="6">+6</option><option value="12" selected>+12</option></select>
+        <button data-a="renovar">Renovar</button><button data-a="codigo">Nuevo código</button><button class="bad" data-a="borrar">Borrar</button></div></td></tr>`;
+  }).join("");
+}
+
+async function entrar() {
+  $("#lerr").textContent = "";
+  KEY = $("#k").value || KEY;
+  try { await cargar(); sessionStorage.setItem("axk", KEY); $("#login").hidden = true; $("#app").hidden = false; }
+  catch (e) { $("#lerr").textContent = e.message; sessionStorage.removeItem("axk"); }
+}
+$("#ent").onclick = entrar;
+$("#k").addEventListener("keydown", e => { if (e.key === "Enter") entrar(); });
+$("#rec").onclick = () => cargar().catch(e => alert(e.message));
+
+$("#crear").onclick = async () => {
+  $("#cerr").textContent = "";
+  const btn = $("#crear"); btn.disabled = true;
+  try {
+    const r = await api({ accion: "crear", nombre: $("#n").value, contacto: $("#c").value, meses: +$("#m").value });
+    mostrarCodigo("Código para " + r.nombre, r.nombre, r.codigo, r.fecha_fin, $("#c").value);
+    $("#n").value = ""; $("#c").value = "";
+    await cargar();
+  } catch (e) { $("#cerr").textContent = e.message; }
+  btn.disabled = false;
+};
+$("#cp").onclick = async () => { await navigator.clipboard.writeText($("#msg").value); $("#cp").textContent = "Copiado ✓"; setTimeout(() => $("#cp").textContent = "Copiar mensaje", 1500); };
+
+$("#tb").addEventListener("click", async e => {
+  const btn = e.target.closest("[data-a]"); if (!btn) return;
+  const tr = btn.closest("tr"), id = tr.dataset.id, nombre = tr.dataset.n, a = btn.dataset.a;
+  try {
+    if (a === "renovar") {
+      const m = +tr.querySelector("select").value;
+      if (!confirm(`¿Sumar ${m} ${m === 1 ? "mes" : "meses"} a ${nombre}?`)) return;
+      await api({ accion: "renovar", id, meses: m });
+    }
+    if (a === "codigo") {
+      if (!confirm(`Se generará un código nuevo para ${nombre} y el anterior dejará de funcionar. ¿Seguir?`)) return;
+      const r = await api({ accion: "nuevo-codigo", id });
+      mostrarCodigo("Nuevo código para " + nombre, nombre, r.codigo, r.fecha_fin, tr.dataset.c);
+    }
+    if (a === "borrar") {
+      if (!confirm(`¿Borrar ${nombre} y toda su carta? No se puede deshacer.`)) return;
+      await api({ accion: "borrar", id });
+    }
+    await cargar();
+  } catch (err) { alert(err.message); }
+});
+
+if (KEY) entrar();
+</script>
+</body>
+</html>

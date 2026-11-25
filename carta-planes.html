@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Planes de la carta digital · AppXpand</title>
-<meta name="description" content="Elige cuánto tiempo quieres tu carta digital con QR. Pago único con tarjeta, sin suscripción automática.">
+<meta name="description" content="Elige cuánto tiempo quieres tu carta digital con QR. Pago por transferencia, sin suscripción automática.">
 <meta name="theme-color" content="#0a0c14">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%234a8eff'/%3E%3Cpath d='M13 10l-6 6 6 6M19 10l6 6-6 6' stroke='white' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="styles.css">
@@ -28,6 +28,22 @@
 .incl ul{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px 24px}
 .incl li{font-size:.92rem;color:var(--fg-secondary)}
 .incl li:before{content:"✓ ";color:var(--primary);font-weight:700}
+.req{max-width:620px;margin:48px auto 0;border-radius:var(--radius);padding:28px}
+.req h3{margin:0 0 6px;font-size:1.25rem}
+.req .sub{color:var(--fg-muted);font-size:.92rem;margin:0 0 18px}
+.req label{display:block;font-size:.8rem;color:var(--fg-muted);margin:12px 0 5px}
+.req input,.req select{width:100%;background:var(--bg);color:var(--fg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font:inherit}
+.req input:focus,.req select:focus{outline:2px solid var(--primary);outline-offset:0}
+.req .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.req .btn{width:100%;justify-content:center;margin-top:20px;cursor:pointer}
+.req .st{color:#f87171;font-size:.9rem;margin-top:10px;min-height:1.2em}
+.ok-box{text-align:center}
+.ok-box h3{font-size:1.4rem}
+.pago{text-align:left;background:var(--bg);border:1px solid var(--border);border-radius:10px;padding:16px;margin:18px 0;font-size:.95rem}
+.pago div{display:flex;justify-content:space-between;gap:12px;padding:4px 0;flex-wrap:wrap}
+.pago span:first-child{color:var(--fg-muted)}
+.pago b{user-select:all;word-break:break-all}
+@media(max-width:560px){.req .two{grid-template-columns:1fr}}
 .foot{text-align:center;color:var(--fg-muted);font-size:.9rem;margin-top:28px;display:flex;flex-direction:column;gap:8px}
 .foot a{color:var(--fg-secondary)}
 </style>
@@ -41,14 +57,14 @@
 <main class="pp"><div class="container">
   <div class="section-header" style="margin-bottom:48px">
     <h2>Elige cuánto tiempo quieres <span class="text-gradient">tu carta</span></h2>
-    <p>Pago único con tarjeta. Sin suscripción automática: cuando termine, renuevas tú si quieres seguir.</p>
+    <p>Pagas por transferencia y te activamos la carta nosotros. Sin suscripción automática: cuando termine, renuevas solo si quieres seguir.</p>
   </div>
 
   <div class="pp-grid" id="planes">
-    <div class="pp-card glass"><h3>1 mes</h3><div class="pp-price">13 €</div><div class="pp-per">13,00 € al mes</div><div class="pp-save"></div><button class="btn btn-outline" data-m="1">Pagar con tarjeta</button></div>
-    <div class="pp-card glass"><h3>3 meses</h3><div class="pp-price">35 €</div><div class="pp-per">11,67 € al mes</div><div class="pp-save">Ahorras 4 €</div><button class="btn btn-outline" data-m="3">Pagar con tarjeta</button></div>
-    <div class="pp-card glass"><h3>6 meses</h3><div class="pp-price">65 €</div><div class="pp-per">10,83 € al mes</div><div class="pp-save">Ahorras 13 €</div><button class="btn btn-outline" data-m="6">Pagar con tarjeta</button></div>
-    <div class="pp-card glass best"><div class="pp-badge">Mejor precio</div><h3>12 meses</h3><div class="pp-price">110 €</div><div class="pp-per">9,17 € al mes</div><div class="pp-save">Ahorras 46 €</div><button class="btn btn-primary" data-m="12">Pagar con tarjeta</button></div>
+    <div class="pp-card glass"><h3>1 mes</h3><div class="pp-price">13 €</div><div class="pp-per">13,00 € al mes</div><div class="pp-save"></div><button class="btn btn-outline" data-m="1">Elegir este plan</button></div>
+    <div class="pp-card glass"><h3>3 meses</h3><div class="pp-price">35 €</div><div class="pp-per">11,67 € al mes</div><div class="pp-save">Ahorras 4 €</div><button class="btn btn-outline" data-m="3">Elegir este plan</button></div>
+    <div class="pp-card glass"><h3>6 meses</h3><div class="pp-price">65 €</div><div class="pp-per">10,83 € al mes</div><div class="pp-save">Ahorras 13 €</div><button class="btn btn-outline" data-m="6">Elegir este plan</button></div>
+    <div class="pp-card glass best"><div class="pp-badge">Mejor precio</div><h3>12 meses</h3><div class="pp-price">110 €</div><div class="pp-per">9,17 € al mes</div><div class="pp-save">Ahorras 46 €</div><button class="btn btn-primary" data-m="12">Elegir este plan</button></div>
   </div>
 
   <div class="incl glass">
@@ -59,27 +75,85 @@
       <li>Categorías y menús del día</li>
       <li>QR para imprimir y descargar</li>
       <li>Dirección propia: /c/tu-bar</li>
-      <li>Aviso por email antes de caducar</li>
+      <li>Activación y soporte por WhatsApp o email</li>
     </ul>
   </div>
 
+  <div class="req glass" id="pedido">
+    <div id="pedido-form">
+      <h3>Solicita tu carta</h3>
+      <p class="sub">Rellena tus datos y te decimos cómo hacer la transferencia. En cuanto la confirmamos, te enviamos tu código personal.</p>
+      <form name="pedido-carta" method="POST" data-netlify="true" netlify-honeypot="bot-field" id="pf">
+        <input type="hidden" name="form-name" value="pedido-carta">
+        <p hidden><label>No rellenar <input name="bot-field"></label></p>
+        <label for="pl">Plan</label>
+        <select id="pl" name="plan" required>
+          <option value="1 mes · 13 €">1 mes · 13 €</option>
+          <option value="3 meses · 35 €">3 meses · 35 €</option>
+          <option value="6 meses · 65 €">6 meses · 65 €</option>
+          <option value="12 meses · 110 €" selected>12 meses · 110 €</option>
+        </select>
+        <label for="neg">Nombre de tu bar o restaurante</label>
+        <input id="neg" name="negocio" required maxlength="80" autocomplete="organization">
+        <div class="two">
+          <div><label for="nom">Tu nombre</label><input id="nom" name="nombre" required maxlength="80" autocomplete="name"></div>
+          <div><label for="tel">Teléfono (WhatsApp)</label><input id="tel" name="telefono" type="tel" required maxlength="20" autocomplete="tel"></div>
+        </div>
+        <label for="em">Email (opcional)</label>
+        <input id="em" name="email" type="email" maxlength="120" autocomplete="email">
+        <button class="btn btn-primary" type="submit">Solicitar mi carta</button>
+        <div class="st" id="pst" role="alert"></div>
+      </form>
+    </div>
+    <div class="ok-box" id="pedido-ok" hidden>
+      <h3>¡Solicitud recibida! 🎉</h3>
+      <p class="sub" id="ok-txt"></p>
+      <div class="pago" id="pago">
+        <div><span>Titular</span><b>PON_AQUI_EL_TITULAR</b></div>
+        <div><span>IBAN</span><b>PON_AQUI_TU_IBAN</b></div>
+        <div><span>Importe</span><b id="ok-imp"></b></div>
+        <div><span>Concepto</span><b id="ok-con"></b></div>
+      </div>
+      <p class="sub">Cuando recibamos la transferencia te mandamos tu código por WhatsApp o email.</p>
+    </div>
+  </div>
+
   <div class="foot">
-    <span>🔒 Pago seguro gestionado por Stripe. Al pagar recibirás tu código por email.</span>
-    <span>¿Ya eres cliente? <a href="carta-panel.html">Entra a tu panel</a> y renueva desde allí.</span>
+    <span>Activamos tu carta en cuanto confirmamos la transferencia.</span>
+    <span>¿Ya eres cliente? <a href="carta-panel.html">Entra a tu panel</a>. Para renovar, haz la solicitud de arriba o escríbenos.</span>
     <span>¿Dudas? <a href="mailto:appxpandcontact@gmail.com">appxpandcontact@gmail.com</a></span>
   </div>
 </div></main>
 
 <script>
-document.querySelectorAll("#planes button").forEach(function(b){b.addEventListener("click",async function(){
-  var t=b.textContent;b.disabled=true;b.textContent="Redirigiendo…";
-  try{
-    var r=await fetch("/api/crear-pago",{method:"POST",body:JSON.stringify({meses:+b.dataset.m})});
-    var d=await r.json();
-    if(d.url)location.href=d.url;else throw 0;
-  }catch(e){alert("No se pudo iniciar el pago. Inténtalo de nuevo.");b.disabled=false;b.textContent=t;}
+// Datos de transferencia: edítalos también arriba, en el bloque id="pago" (titular e IBAN).
+document.querySelectorAll("#planes button").forEach(function(b){b.addEventListener("click",function(){
+  var m=b.dataset.m, sel=document.getElementById("pl");
+  for(var i=0;i<sel.options.length;i++){ if(sel.options[i].value.indexOf(m+" mes")===0){ sel.selectedIndex=i; break; } }
+  document.getElementById("pedido").scrollIntoView({behavior:"smooth",block:"center"});
+  setTimeout(function(){document.getElementById("neg").focus({preventScroll:true});},500);
 });});
-window.addEventListener("pageshow",function(e){if(e.persisted)document.querySelectorAll("#planes button").forEach(function(b){b.disabled=false;b.textContent="Pagar con tarjeta";});});
+
+var f=document.getElementById("pf");
+f.addEventListener("submit",async function(e){
+  e.preventDefault();
+  var btn=f.querySelector("button[type=submit]"), st=document.getElementById("pst"), t=btn.textContent;
+  btn.disabled=true; btn.textContent="Enviando…"; st.textContent="";
+  try{
+    var r=await fetch("/",{method:"POST",headers:{"Content-Type":"application/x-www-form-urlencoded"},body:new URLSearchParams(new FormData(f)).toString()});
+    if(!r.ok) throw new Error(r.status);
+    var plan=document.getElementById("pl").value, neg=document.getElementById("neg").value;
+    document.getElementById("ok-imp").textContent=plan.split("·")[1].trim();
+    document.getElementById("ok-con").textContent="Carta "+neg;
+    document.getElementById("ok-txt").textContent="Plan elegido: "+plan+". Haz la transferencia con estos datos:";
+    document.getElementById("pedido-form").hidden=true;
+    document.getElementById("pedido-ok").hidden=false;
+    document.getElementById("pedido").scrollIntoView({behavior:"smooth",block:"center"});
+  }catch(err){
+    st.textContent="No se ha podido enviar. Escríbenos a appxpandcontact@gmail.com o al +34 633 86 08 65.";
+    btn.disabled=false; btn.textContent=t;
+  }
+});
 </script>
 </body>
 </html>
