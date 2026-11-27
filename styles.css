@@ -594,3 +594,10 @@ body { overflow-x: hidden; }
 
 /* Carta digital · enlace en tarjeta */
 .carta-code { font-size: .85rem; color: var(--fg-muted); text-decoration: underline; margin-top: 4px; }
+
+/* Líneas 2027 */
+.soon-pill { display: inline-block; font-size: .72rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 4px 12px; border-radius: 999px; background: rgba(245, 158, 11, .15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, .4); margin-bottom: 6px; }
+.soon-pill-lg { font-size: .8rem; padding: 6px 16px; margin-bottom: 14px; }
+.soon-price { font-size: .8rem !important; color: var(--fg-muted); margin-bottom: 10px; }
+.soon-note { text-align: center; color: var(--fg-muted); font-size: .9rem; margin-top: 24px; }
+.soon-note a { color: var(--primary); }
